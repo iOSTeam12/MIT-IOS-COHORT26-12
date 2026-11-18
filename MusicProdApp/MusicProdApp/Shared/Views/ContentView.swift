@@ -1,40 +1,30 @@
 import SwiftUI
 
-/// Root view. For now it opens Lesson 1.1 directly and shows a blank
-/// screen once the learner leaves or finishes it. Debug builds also show
-/// an "Audio test" button that opens the audio test screen (see DebugFlags).
+/// Root view: one NavigationStack with Home at the bottom. Every other
+/// screen is opened by pushing an `AppRoute` onto the router's path, and
+/// Back pops it. Debug builds also show an "Audio test" button (see DebugFlags).
+///
+/// TODO: CLAUDE.md says root navigation lives in App/. Decide whether to
+/// move this file to App/RootView.swift.
 struct ContentView: View {
     let beatPlayer: any BeatPlaying
-    @State private var lessonViewModel = LessonViewModel(content: .lesson1_1)
-    @State private var introViewModel: IntroViewModel
-    @State private var learnViewModel: LearnViewModel
-    @State private var doOneViewModel: DoOneViewModel
-    @State private var doTwoViewModel: DoTwoViewModel
-    @State private var doThreeViewModel: DoThreeViewModel
-    @State private var finaleViewModel: FinaleViewModel
+    @State private var router = AppRouter()
     @State private var showAudioTest = false
 
-    init(beatPlayer: any BeatPlaying) {
-        self.beatPlayer = beatPlayer
-        _introViewModel = State(initialValue: IntroViewModel(beatPlayer: beatPlayer))
-        _learnViewModel = State(initialValue: LearnViewModel(beatPlayer: beatPlayer))
-        _doOneViewModel = State(initialValue: DoOneViewModel(beatPlayer: beatPlayer))
-        _doTwoViewModel = State(initialValue: DoTwoViewModel(beatPlayer: beatPlayer))
-        _doThreeViewModel = State(initialValue: DoThreeViewModel(beatPlayer: beatPlayer))
-        _finaleViewModel = State(initialValue: FinaleViewModel(beatPlayer: beatPlayer))
-    }
-
     var body: some View {
-        Group {
-            if lessonViewModel.hasExited {
-                TemporaryBlankView()
-            } else {
-                LessonView(viewModel: lessonViewModel, introViewModel: introViewModel, learnViewModel: learnViewModel,
-                           doOneViewModel: doOneViewModel, doTwoViewModel: doTwoViewModel,
-                           doThreeViewModel: doThreeViewModel, finaleViewModel: finaleViewModel)
-            }
+        NavigationStack(path: $router.path) {
+            HomeView()
+                // Our screens draw their own header, so hide the system bar.
+                .toolbar(.hidden, for: .navigationBar)
+                .navigationDestination(for: AppRoute.self) { route in
+                    destination(for: route)
+                        .toolbar(.hidden, for: .navigationBar)
+                }
         }
-        // Bottom centre: the corners hold the lesson's own buttons.
+        // Every screen can reach the router to open screens or go back.
+        .environment(router)
+        // Bottom centre, clear of Home's beat lights (bottom left) and
+        // SWIPE (bottom right) in Figma.
         .overlay(alignment: .bottom) {
             if DebugFlags.showAudioDebug {
                 GlassTextButton(title: "Audio test") { showAudioTest = true }
@@ -43,9 +33,28 @@ struct ContentView: View {
         .fullScreenCover(isPresented: $showAudioTest) {
             AudioDebugView(beatPlayer: beatPlayer)
         }
+        // The app is dark only.
+        .preferredColorScheme(.dark)
+        // Text can grow up to the largest standard size, but not to the
+        // Accessibility sizes: at those, Home's 54 pt hero text would no
+        // longer fit a 393 pt-tall landscape screen.
+        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+    }
+
+    /// The screen for each route.
+    @ViewBuilder
+    private func destination(for route: AppRoute) -> some View {
+        switch route {
+        case .learn: StationSelectionView()
+        case .challenge: ChallengeDashboardView()
+        case .sandbox: SandboxHomeView()
+        case .profile: ProfileView()
+        case .lesson: LessonFlowView(beatPlayer: beatPlayer)
+        }
     }
 }
 
 #Preview(traits: .landscapeLeft) {
-    ContentView(beatPlayer: BeatPlayer())
+    AppFont.registerFonts()
+    return ContentView(beatPlayer: BeatPlayer())
 }
