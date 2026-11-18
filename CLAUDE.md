@@ -3,7 +3,7 @@
 ## Project
 - MusicProdApp: native iOS app teaching beginner music production. Features: Home (navigation hub), Learn (4 stations of lessons), Challenges, Sandbox, Progress (Profile lives inside Progress).
 - Built by two students as a capstone. Both are Swift/SwiftUI/Xcode beginners, so explain what you do in plain language.
-- Current phase: UI RESKIN. The audio engine, tap/tempo logic, view models and content models from Lesson 1.1 already exist and are tested: reuse them, do not rewrite them. Views, tokens and components are being rebuilt to the new Figma design.
+- Current phase: UI RESKIN. The audio engine, tap/tempo logic, view models and content models from Lesson 1.1 already exist: reuse them, do not rewrite them. There is no test target yet; pure rules should get unit tests once a test target exists. Views, tokens and components are being rebuilt to the new Figma design.
 - Current scope is stated in the task. Do not build screens or features that aren't asked for.
 
 ## Source of truth
@@ -14,8 +14,8 @@ Do not invent screens, copy, colours or interactions. If something is missing or
 
 ## Tech stack
 - Xcode 27.2, Swift, SwiftUI. iPhone only, landscape only, dark mode only, English only.
-- Minimum iOS: Liquid Glass needs iOS 26+. Check the project's deployment target before relying on it, and never set it above the iOS on our test phones.
-- Test devices: iPhone 13 (844x390), iPhone 17 (874x402). Figma frames are iPhone 16 landscape (852x393): use real layout and safe areas, never hard-code Figma coordinates.
+- Minimum iOS: the deployment target is iOS 27.2, the iOS both test phones run. Never set it higher.
+- Test devices: iPhone 16 (852x393 landscape) and iPhone 17 (874x402 landscape), both on iOS 27.2. Figma frames are iPhone 16 landscape (852x393): use real layout and safe areas, never hard-code Figma coordinates.
 - Frameworks: SwiftUI, AVFoundation. No third-party packages without asking.
 - Persistence is undecided (SwiftData vs UserDefaults + JSON). Do not choose. Put it behind a small protocol.
 
@@ -44,7 +44,7 @@ MusicProdApp/
 - Keep it simple: no extra abstraction layers we can't explain.
 
 ## Design rules (from the current Figma)
-- Fonts, ONLY two: Pulse12 (Bold) for titles, headings and big numbers; SF Mono for everything else, buttons included. Never SF Pro, never a digital font on buttons. Use `Font.custom(..., relativeTo:)` / system monospaced so text scales.
+- Fonts, ONLY two: Pulse12 (Bold) for titles, headings and big numbers; SF Mono for everything else, buttons included. One exception from Figma: the lesson preview title (e.g. "Tempo and Beats") is SF Mono Bold 20. Never SF Pro, never a digital font on buttons. Views use `.appFont(.role)` from `AppFont`, which scales every size with Dynamic Type.
 - Fonts are defined once in `Core/DesignSystem` (`AppFont`). Colours only via `AppColor`, never inline. Re-read the exact values from the Figma variables; do not trust the values written in old docs.
 - Effects: native Liquid Glass (`.glass`, `.glassProminent`) is allowed on controls. No other glow, blur, gradients, scanlines, VHS/CRT effects, or custom shadows unless Figma shows them.
 - Icons: SF Symbols only.
@@ -70,5 +70,5 @@ MusicProdApp/
 ## How to work with us
 - Before coding each block: list the files to create or change and why, and the Figma frames you read. WAIT for our OK.
 - Small steps; explain what each file does in plain language. Don't generate the whole project at once.
-- After each block: build, run tests, then tell us what to test on the iPhone 13 and 17, then give the git commands. Never call anything working unless verified.
+- After each block: build, run tests, then tell us what to test on the iPhone 16 and 17, then give the git commands. Never call anything working unless verified.
 - Challenge our decisions when there's a better approach. Ask instead of guessing. If a build error isn't fixed after two attempts, stop and report what you tried.
