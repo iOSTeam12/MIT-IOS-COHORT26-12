@@ -17,4 +17,8 @@ enum AppColor {
     // plain hex values, not saved as Figma variables.
     static let progressEmpty = Color(hex: 0x2A2D2F)       // segment fill
     static let progressEmptyStroke = Color(hex: 0x3A3D40) // segment border; Home segment fill
+
+    // Drop shadow under Home's coins pill and profile button (Figma effect:
+    // black at 45%, offset 0/4, blur 10).
+    static let dropShadow = Color(hex: 0x000000).opacity(0.45)
 }

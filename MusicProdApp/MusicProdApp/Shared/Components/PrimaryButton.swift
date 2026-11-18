@@ -9,7 +9,7 @@ struct PrimaryButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.headline)
+                .appFont(.button)
                 .foregroundStyle(AppColor.background)
         }
         .buttonStyle(.glassProminent)
