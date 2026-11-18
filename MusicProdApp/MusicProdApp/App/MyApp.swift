@@ -5,6 +5,11 @@ import SwiftUI
     // Services are created once here and passed down; views never create them.
     @State private var beatPlayer = BeatPlayer()
 
+    init() {
+        // Make the Pulse12 font available before any screen draws text.
+        AppFont.registerFonts()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView(beatPlayer: beatPlayer)
