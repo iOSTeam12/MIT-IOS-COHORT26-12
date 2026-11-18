@@ -14,7 +14,7 @@ struct HomeSectionDetails: View {
             progressRow
 
             HStack(spacing: 24) {
-                PrimaryButton(title: section.primaryTitle, action: onPrimary)
+                HomePrimaryButton(title: section.primaryTitle, action: onPrimary)
 
                 Button(action: onLink) {
                     HStack(spacing: 6) {
