@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// The four beat lights in the bottom-left corner. One light is bright,
-/// the others are at 22% (Figma). For now beat 1 is always lit; block H3b
-/// makes them follow the 60 BPM beat.
+/// the others are at 22% (Figma). `HomeView` passes the beat to light,
+/// counting 1-2-3-4 at 60 BPM.
 struct BeatLights: View {
     var activeBeat = 1
 
