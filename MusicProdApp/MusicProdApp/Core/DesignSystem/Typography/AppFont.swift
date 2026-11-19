@@ -47,13 +47,13 @@ enum AppFont {
             case .coins: 16
             case .detailTitle: 20
             case .body: 15
-            case .subtitle: 12
+            case .subtitle: 17
             case .label: 11
             case .bodyLarge: 16
             case .rowTitle: 15
             case .caption: 11
-            case .button: 15
-            case .secondaryButton: 13
+            case .button: 17
+            case .secondaryButton: 17
             }
         }
 
