@@ -17,7 +17,7 @@ struct GlassTextButton: View {
                 Text(title)
                     .foregroundStyle(AppColor.textPrimary)
             }
-            .font(.headline)
+            .appFont(.button)
         }
         .buttonStyle(.glass)
         .controlSize(.large)

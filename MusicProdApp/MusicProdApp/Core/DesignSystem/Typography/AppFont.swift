@@ -21,9 +21,13 @@ enum AppFont {
         case heading         // Station names under the artwork
         case bigNumber       // BPM "060", beat lights, progress "0/4", Musician Coins
         case kicker          // Small label above a title, e.g. "DRUMS" in the lesson preview
+        case smallNumber     // Home: progress count, e.g. "0/4", "00"
+        case coins           // Home: the Musician Coins number in the pill
         // SF Mono
         case detailTitle     // Lesson preview title, e.g. "Tempo and Beats"
         case body            // Subtitles and descriptions
+        case subtitle        // Home: line under the big word, e.g. "Lessons, beat by beat"
+        case label           // Home: progress label, e.g. "DRUMS", "PROJECTS"
         case bodyLarge       // e.g. "Choose a station to build your track"
         case rowTitle        // Lesson row titles, "0 / 4 Complete"
         case caption         // Small capitals, e.g. "SWIPE", "FINALE", "BPM"
@@ -39,13 +43,17 @@ enum AppFont {
             case .heading: 14
             case .bigNumber: 14
             case .kicker: 12
+            case .smallNumber: 12
+            case .coins: 16
             case .detailTitle: 20
             case .body: 15
+            case .subtitle: 17
+            case .label: 11
             case .bodyLarge: 16
             case .rowTitle: 15
             case .caption: 11
-            case .button: 15
-            case .secondaryButton: 13
+            case .button: 17
+            case .secondaryButton: 17
             }
         }
 
@@ -59,8 +67,12 @@ enum AppFont {
             case .heading: .headline
             case .bigNumber: .headline
             case .kicker: .caption
+            case .smallNumber: .caption
+            case .coins: .callout
             case .detailTitle: .title3
             case .body: .subheadline
+            case .subtitle: .caption
+            case .label: .caption2
             case .bodyLarge: .callout
             case .rowTitle: .subheadline
             case .caption: .caption2
@@ -72,7 +84,7 @@ enum AppFont {
         /// Extra space between letters, in points (Figma "letter spacing").
         var tracking: CGFloat {
             switch self {
-            case .kicker, .secondaryButton: 1.5
+            case .kicker, .secondaryButton, .label: 1.5
             case .caption: 1
             default: 0
             }
@@ -81,15 +93,15 @@ enum AppFont {
         /// Builds the actual font at an already-scaled size.
         func font(size: CGFloat) -> Font {
             switch self {
-            case .hero, .heroSecondary, .title, .heading, .bigNumber, .kicker:
+            case .hero, .heroSecondary, .title, .heading, .bigNumber, .kicker, .smallNumber, .coins:
                 // `fixedSize` because the size is already scaled by the modifier
                 // below; otherwise iOS would scale it a second time.
                 // Note: Figma asks for Pulse12 *Regular* on `kicker`, but only the
                 // Bold file exists in Resources/Fonts, so Bold is used for now.
                 Font.custom(AppFont.pulse12Name, fixedSize: size)
-            case .body, .bodyLarge:
+            case .body, .bodyLarge, .subtitle:
                 Font.system(size: size, weight: .regular, design: .monospaced)
-            case .rowTitle, .caption, .secondaryButton:
+            case .rowTitle, .caption, .secondaryButton, .label:
                 Font.system(size: size, weight: .semibold, design: .monospaced)
             case .detailTitle, .button:
                 Font.system(size: size, weight: .bold, design: .monospaced)
@@ -156,8 +168,12 @@ extension View {
         (.heading, "heading · Pulse12 14", "Bass and Melody"),
         (.bigNumber, "bigNumber · Pulse12 14", "060  0/4  1 2 3 4"),
         (.kicker, "kicker · Pulse12 12", "DRUMS"),
+        (.smallNumber, "smallNumber · Pulse12 12", "0/4  00"),
+        (.coins, "coins · Pulse12 16", "0"),
         (.detailTitle, "detailTitle · SF Mono Bold 20", "Tempo and Beats"),
-        (.body, "body · SF Mono 15", "Lessons, beat by beat"),
+        (.body, "body · SF Mono 15", "Short descriptions"),
+        (.subtitle, "subtitle · SF Mono 12", "Lessons, beat by beat"),
+        (.label, "label · SF Mono SemiBold 11", "DRUMS  PROJECTS"),
         (.bodyLarge, "bodyLarge · SF Mono 16", "Choose a station to build your track"),
         (.rowTitle, "rowTitle · SF Mono SemiBold 15", "Tempo and Beats"),
         (.caption, "caption · SF Mono SemiBold 11", "SWIPE  FINALE  BPM"),
@@ -187,7 +203,7 @@ extension View {
                         .foregroundStyle(AppColor.textSecondary)
                     Text(text)
                         .appFont(role)
-                        .foregroundStyle(role == .hero || role == .heroSecondary || role == .bigNumber
+                        .foregroundStyle([.hero, .heroSecondary, .bigNumber, .smallNumber].contains(role)
                                          ? AppColor.accentCyan : AppColor.textPrimary)
                 }
             }
