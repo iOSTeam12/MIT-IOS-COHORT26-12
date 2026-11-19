@@ -56,6 +56,7 @@ MusicProdApp/
 
 ## Audio
 - One audio clock: schedule every musical event from the audio engine's clock, never Timer or DispatchQueue. Visuals read position from the engine.
+- Exception: Home visuals (beat lights, auto-rotation) may use SwiftUI's TimelineView because they play no sound; musical audio still uses the engine clock.
 - Judge taps against the audio clock, compensating for output latency. Tap pads react on touch-down.
 - Drums are three one-shots (kick, snare, closed hi-hat) sequenced in code; melodic sounds later via a sampler.
 - Audio files live in `Resources/Audio/`, uniquely named, listed in `docs/lesson-1.1/audio-manifest.md`.
